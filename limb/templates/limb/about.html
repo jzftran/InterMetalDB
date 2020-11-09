@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class=" col s12">
+    <div class="card white">
+      <div class=card-content>
+      <span class="card-title">About</span>
+      <p>InterMetalDB gathers intermolecular metal binding sites that are deposited in <a href="https://www.rcsb.org/">RCSB Protein Data Bank</a>.</p><br>
+      <p>
+        For every metal present in PDB structure coordinating environment is assessed within 3 Angstrom radius. If metal is coordinated by at least two heteroatoms from at least two different chains, metal is considered to be interfacialy bound. No other restraints  like resolution requirements were applied.
+      </p> <br>
+
+      <p>
+      Metal examination is based on <a href="https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/biological-assemblies">biological assemblies </a> as defined in PDB files. To build database is chosen assembly that has lowest energy while still holding an metal ion.
+      </p><br>
+
+      <p>
+      Representative metal binding sites are based on chain clustering on 50% sequence identity, and group identifier, which is based on metal coordinating environment in radius of 5 angstroms. Representative site is chosen based on best structure resolution.
+      </p><br>
+      </div>
+    </div>
+  </div>
+
+
+  <div class=" col s12">
+    <div class="card white">
+      <div class=card-content>
+      <span class="card-title">How to use and what kind of information you can get?</span>
+      <p>
+      <h6>Details about PDB</h6>
+      <p>Knowing the PDB code of the structure containing intermolecularly bound metal you can view more detail about it by entering it in search field in <a href="{% url 'search' %}">Search for PDB structures</a>. It will return PDB record. You can follow the link in order to see more details about PDB like: metal sites in PDB and structure visualization
+      </p><br>
+      <h6>Searching for PDB files</h6>
+      <p>You can query the data about PDB files by different parameters with <a href="{% url 'search' %}">Search for PDB structures</a>, e.g. you can search for structures of <a href='/search/?id=&title=&classification=&keywords=&organism=Homo+sapiens&resolution_min=2.0&resolution_max=3.0&deposition_date_min=&deposition_date_max='>human protein with resolution between 2.0-3 ansgtroms </a>.
+      </p><br>
+      <h6>Searching for metal sites</h6>
+      <p>You can query the data about metal sites  different parameters with <a href="{% url 'searchMetalSite' %}">Search for metal sites</a>, e.g. you can search for <a href='/search_metal_site/?id=&element=zn&binding_family=c4&aminoacid_residue_names=&all_residue_names=&number_of_coordinating_aminoacid_residues=&number_of_coordinating_residues='>metal sites that contain Zn(II) coordinated by four cysteines</a>.
+      </p><br>
+      <h6>Viewing PDB and metal site record</h6>
+      <p>At top of the web page representing record there is a PDB title, next is PDB ID, that allow for downloading structure from <a href="https://www.rcsb.org/">RCSB Protein Data Bank</a>. After that there are some more descriptive details regarding PDB file, when it was deposited, classification and keywords that help to find PDB record, technique that allowed for structure acquisition and more information. This description comes directly from RCSB PDB.
+      After PDB description are placed links to metal sites.
+      <br>
+      Web page representing metal site contains at the top id of corresponding PDB file, and metal site ID. Next comes information whether metal binding site is homomeric, and binding residues identifiers with corresponding chains.
+      <br>
+      At bottom of both web pages there is placed <a href="http://nglviewer.org/">NGL viewer</a> that allows for structure visualization.
+
+      </p><br>
+
+
+      <h6>Viewing statistics</h6>
+      <p>Statistics webpage contains descriptive statistics of metal binding sites and PDB files gathered in InterMetalDB. This statistics allow to gain insight about metal ions bound in-between two macromolecules. At the top of the web site you can see different groups of amino acids or nucleotide residues involved in metal binding, by clicking on the group you will be redirected to search web site.<br>
+
+      By clicking on a particular metal, you can learn about the lengths of bonds between ligands and metal, the amount of a particular metal relative to the presence of other ions, the most common coordination families, the most common ligands that coordinate the metal, and other useful information.
+      At the top of the web site you can see different groups of amino acids or nucleotide residues involved in metal binding, by clicking on the group you will be redirected to search web site.
+      </p><br>
+
+      </div>
+    </div>
+  </div>
+
+  <div class=" col s12">
+    <div class="card white">
+      <div class=card-content>
+      <span class="card-title">Glossary</span>
+      <p>
+        <li><b>Bound amino acid or nucleotide residues</b> - identifier of directly bound residues from macromolecule. If residue is non-standard "X" is placed as a residue abbreviation.</li>
+        <li><b>Gene source organism</b> - the source of the gene whose expression results in the structural biomolecule described in the file. Most of the structures deposited in RCSB PDB are a product of heterologous expression, where expression in a host organism is a from gene that is not normally present in a host.</li>
+        <li><b>Group identifier</b> - all residues  in radius of 5 angstroms from metal represented as one letter abbreviation of corresponding residues together with their count (e.g E2C3H1).</li>
+        <li><b>Ligand</b> - a chemical species (ion, or functional group) that is bound to metal ion, any non-hydrogen, non-carbon atom in distance <3 ansgtroms (center to center) from metal ion is considered to be bound to it. For the database purpose amino acid residues and nucleotide residues in protein and polynucleotide chains are considered to be distinct ligands.</li>
+        <li><b>Metal site ID</b> - unique identifier of metal site. This ID is constructed by joining PDB ID, element name and its order in PDB structural file.</li>
+        <li><b>number of all bound ligands</b> - represents number of all ligands bound to a metal ion. Sometimes metal ions in metal sites are coordinated by molecules that are not part of macromolecule.</li>
+        <li><b>Number of bound chains</b> - number of chains that contain residues bound to metal ion.</li>
+        <li><b>PDB ID</b> - Protein Data Bank identifier, each structure file published in PDB gets a four-character identifier. One should note that it is not a unique of a biomolecule, because one PDB structure file may contain different macromolecules, and biomolecule can be represented by several different structure files</li>
+        <li><b>PDB title</b> - each PDB file deposited in RCSB PDB has its own title, you can use this in order to search structure of your interest</li>
+        <li><b>Representative site</b> - a metal binding site that is chosen to represent a group of other, similar structural sites. The selection is done by clustering chains in PDB files by 50% sequential similarity and then in each cluster the binding sites are then themselves clustered based on a group identifier and best resolution of the structure.</li>
+        <li><b>Technique</b> - experimental method that has been used to determine the structure, so far the most common for structure acquisition is X-ray</li>
+        </p>
+
+
+       </div>
+    </div>
+  </div>
+
+  <div class=" col s12">
+    <div class="card white">
+      <div class=card-content>
+      <span class="card-title">Contact us</span>
+      <p>For debugging or any other questions related contact us:
+        <li><a  href="mailto:jozef.tran@uwr.edu.pl">Józef Tran</a></li>
+        <li><a  href="mailto:artur.krezel@uwr.edu.pl">Artur Krężel</a></li>
+      </p>
+       </div>
+    </div>
+  </div>
+
+
+
+  <div class=" col s12">
+    <div class="card white">
+      <div class=card-content>
+      <span class="card-title">References</span>
+      If you would like to learn more about database construction please read our recent publication: <br>
+      J. B. Tran, and A. Krężel, "InterMetalDB: A database and browser of intermolecular metal binding sites in macromolecules with structural information", submitted to: Journal of Proteome Research.  <br>
+
+      If you are interested in intermolecularly bound zinc ions, and their role in living organisms please read our publication:<br>
+      <b>A. Kocyła, J. B. Tran, and A. Krężel, “Galvanization of Protein–Protein Interactions in a Dynamic Zinc Interactome,” Trends Biochem. Sci., vol. xx, no. xx, pp. 1–16, Sep. 2020.
+      <a href="https://doi.org/10.1016/j.tibs.2020.08.011">https://doi.org/10.1016/j.tibs.2020.08.011</a></b>
+
+       </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+
+{% block footer %}
+<footer class="page-footer blue lighten-1">
+  <div class="container">
+    <div class="row">
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Made with:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="https://atomium.samireland.com"><b>Atomium</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="http://materializecss.com"><b>Materialize</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.djangoproject.com"><b>Django</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://molstar.org/"><b>Mol*</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.chartjs.org/"><b>Chart.js</b></a> </li>
+        </ul>
+
+      </div>
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>See also:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="https://www.wwpdb.org/"><b>Worldwide PDB</b> </a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.rcsb.org/"><b>RCSB PDB</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="http://metalweb.cerm.unifi.it/"><b>MetalPDB</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://zincbind.net/"><b>ZincBind</b></a> </li>
+        </ul>
+      </div>
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Connect:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>Department of Chemical Biology </b></a></li>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>Faculty of Biotechnology </b></a></li>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>University of Wrocław </b></a></li>
+        </ul>
+      </div>
+
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Contact us:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="mailto:jozef.tran@uwr.edu.pl"><b>Józef Tran</b></a></li>
+          <li><a class="orange-text text-lighten-3" href="mailto:artur.krezel@uwr.edu.pl"><b>Artur Krężel</b></a></li>
+
+        </ul>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      <p class="grey-text text-lighten-4">Created by Józef Tran @ <a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl">Department of Chemical Biology at Faculty of Biotechnology, University of Wrocław </a> </p>
+    </div>
+  </div>
+</footer>
+
+
+{% endblock %}

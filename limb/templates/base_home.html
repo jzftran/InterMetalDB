@@ -1,0 +1,88 @@
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+
+
+
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}InterMetalDB{% endblock %}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static "limb/favicon.ico"%}"/>
+
+    <style>
+      #viewerSection{
+        width: 100%;
+        height: 450px;
+        position:relative;
+      }
+      .container {
+    margin: 0 auto;
+    max-width: 1280px;
+    width: 90%;
+  }
+
+  @media only screen and (min-width: 601px) {
+    .container {
+      width: 90%;
+    }
+  }
+
+  @media only screen and (min-width: 993px) {
+    .container {
+      width: 90%;
+    }
+  }
+
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+
+
+
+
+
+
+    </style>
+
+
+
+
+  </head>
+
+  <body style="background-color:#f2f2f2;">
+  <main>
+    {% include 'includes/header.html' %}
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <div class="container">
+      {% block javascript %}
+      {% endblock %}
+    </div>
+  </main>
+      {% block footer %}
+      {% endblock %}
+  </body>
+
+
+
+
+
+</html>

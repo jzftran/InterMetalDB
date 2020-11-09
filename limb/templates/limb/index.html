@@ -1,0 +1,107 @@
+{% extends 'base_home.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+
+
+<div class="row" >
+  <div class="col s12 m12 l6">
+    <div class="card white ">
+        <div class=card-content>
+    <h4 class="text"><span class="flow-text">The Intermolecular Metal-Site Database</span></h4><div class="divider"></div>
+ InterMetalDB automatically aggregates and allows easy access to the intermolecular metal sites in biological macromolecules with structural information deposited in Protein Data Bank (PDB).
+ </div>
+ </div>
+ <div class="card white ">
+     <div class=card-content>
+  <h4 class="text"><span class="flow-text">What does InterMetalDB?</span></h4><div class="divider"></div>
+    InterMetalDB finds all interfacialy bound metal ions present in the RCSB PDB, determines its binding sites, and clusters
+    them based on liganding chain sequence and coordination environment. <br>
+  </div>
+  </div>
+  </div>
+
+
+
+
+  <div class="col s12 m12 l6">
+
+      <div class="center-align">
+      <img class="center-align" class="responsive-img" src="{% static "limb/image.png"%}" width="100%" >
+      </div>
+  </div>
+
+
+
+</div>
+<div class="row" >
+
+  <div class="col s12 m12 l12">
+    <div class="card white ">
+        <div class=card-content>
+<h4 class="text"><span class="flow-text">References</span></h4><div class="divider"></div>
+<li>J. B. Tran, and A. Krężel, "InterMetalDB: A database and browser of intermolecular metal binding sites in macromolecules with structural information", submitted to: Journal of Proteome Research.</li>
+
+<li>A. Kocyła, J. B. Tran, and A. Krężel, “Galvanization of Protein–Protein Interactions in a Dynamic Zinc Interactome,” Trends Biochem. Sci., vol. xx, no. xx, pp. 1–16, Sep. 2020.
+<a href="https://doi.org/10.1016/j.tibs.2020.08.011">https://doi.org/10.1016/j.tibs.2020.08.011</a></li> <br>
+{% endblock %}
+  </div>
+  </div>
+  </div>
+</div>
+{% block footer %}
+<footer class="page-footer blue lighten-1">
+  <div class="container">
+    <div class="row">
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Made with:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="https://atomium.samireland.com"><b>Atomium</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="http://materializecss.com"><b>Materialize</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.djangoproject.com"><b>Django</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://molstar.org/"><b>Mol*</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.chartjs.org/"><b>Chart.js</b></a> </li>
+        </ul>
+
+      </div>
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>See also:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="https://www.wwpdb.org/"><b>Worldwide PDB</b> </a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://www.rcsb.org/"><b>RCSB PDB</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="http://metalweb.cerm.unifi.it/"><b>MetalPDB</b></a> </li>
+          <li><a class="orange-text text-lighten-3" href="https://zincbind.net/"><b>ZincBind</b></a> </li>
+        </ul>
+      </div>
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Connect:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>Department of Chemical Biology </b></a></li>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>Faculty of Biotechnology </b></a></li>
+          <li><a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl/"><b>University of Wrocław </b></a></li>
+        </ul>
+      </div>
+
+      <div class="col l3 s12">
+        <h6 class="white-text"><b>Contact us:</b></h6>
+        <ul>
+          <li><a class="orange-text text-lighten-3" href="mailto:jozef.tran@uwr.edu.pl"><b>Józef Tran</b></a></li>
+          <li><a class="orange-text text-lighten-3" href="mailto:artur.krezel@uwr.edu.pl"><b>Artur Krężel</b></a></li>
+
+        </ul>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      <p class="grey-text text-lighten-4">Created by Józef Tran @ <a class="orange-text text-lighten-3" href="http://chembiolab.uni.wroc.pl">Department of Chemical Biology at Faculty of Biotechnology, University of Wrocław </a> </p>
+    </div>
+  </div>
+</footer>
+
+
+{% endblock %}

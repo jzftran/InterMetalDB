@@ -1,0 +1,49 @@
+<nav>
+  <div class="nav-wrapper blue darken-1">
+      <a href="{% url 'index' %}" class="brand-logo right">InterMetalDB</a>
+    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul class="left hide-on-med-and-down">
+      <li><a href="{% url 'index' %}">InterMetalDB</a></li>
+
+      <li{% if '/search for PDB structures/' in request.path %} class="active"{% endif %}>
+        <a href="{% url 'search' %}">Search for PDB structures</a>
+      </li>
+      <li{% if '/search for metal sites/' in request.path %} class="active"{% endif %}>
+        <a href="{% url 'searchMetalSite' %}">Search for metal sites</a>
+      </li>
+      <li{% if '/statistics /' in request.path %} class="active"{% endif %}>
+        <a href="{% url 'statistics' %}">Statistics</a>
+      </li>
+      <li{% if '/about /' in request.path %} class="active"{% endif %}>
+        <a href="{% url 'about' %}">About & instructions</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<ul class="sidenav" id="mobile-demo">
+
+  <li><a href="{% url 'index' %}">InterMetalDB</a></li>
+  <li{% if '/search for PDB structures/' in request.path %} class="active"{% endif %}>
+    <a href="{% url 'search' %}">Search for PDB structures</a>
+  </li>
+  <li{% if '/search for metal sites/' in request.path %} class="active"{% endif %}>
+    <a href="{% url 'searchMetalSite' %}">Search for metal sites</a>
+  </li>
+  <li{% if '/statistics /' in request.path %} class="active"{% endif %}>
+    <a href="{% url 'statistics' %}">Statistics</a>
+  </li>
+  <li{% if '/about /' in request.path %} class="active"{% endif %}>
+    <a href="{% url 'about' %}">About & instructions</a>
+</ul>
+
+
+<script>
+  M.AutoInit();
+
+ // initializing the .sidenav element
+
+ var elem = document.querySelector('.sidenav');
+ var instance = M.Sidenav.init(elem);
+
+  </script>

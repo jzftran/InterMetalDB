@@ -1,0 +1,604 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load dict_tag %}
+
+
+<div class="row">
+  {% for ion in charge_dict %}
+  {%if ion in metals%}
+  <div class="col s12 m12">
+    <div class="card white">
+      {%if representative is not True%}
+        <div class=card-content>
+          <p class='center'><a href="{% url 'statistics' %}{{metal.residue_name}}">{{charge_dict|get_value_from_dict:metal.residue_name}}</a></p>
+      </div>
+      {%endif%}
+
+      {%if representative is True%}
+      <div class=card-content>
+        <p class='center'><a href="{% url 'statistics' %}{{metal.residue_name}}/True">{{charge_dict|get_value_from_dict:metal.residue_name}}</a></p>
+    </div>
+    {%endif%}
+
+    </div>
+  </div>
+
+  {% endif %}
+  {% endfor %}
+  </div>
+
+
+
+
+
+<div class="row">
+<div class="col s12 m12">
+    <div class="card white">
+      <div class=card-content>
+    {%if representative is not True%}
+    <p>Right now you are seeing statistics for non-representative data set. In order to see representative data click <a href="/statistics/representative">here</a>.</p>
+    {%endif%}
+
+    {%if representative is  True%}
+    <p>Right now you are seeing statistics for representative data set. In order to see non-representative data click <a href="/statistics/">here</a>.</p>
+    {%endif%}
+      </div>
+    </div>
+    </div>
+</div>
+
+<div class="row">
+<div class="col s12 m12">
+
+<ul class="collapsible expandable">
+  <li>
+  <div class="collapsible-header"><i class="material-icons iconadd">add</i>
+             <i class="material-icons iconremove">remove</i>Statistics for element</div>
+  <div class="collapsible-body">
+    <div class="row">
+      {% for ion in charge_dict %}
+      {%for metal in metals%}
+      {%if ion == metal.residue_name%}
+      <div class="col s12 m3 l4 xl1">
+        <div class="card white">
+          {%if representative is not True%}
+            <div class=card-content>
+              <p class='center'><a href="{% url 'statistics' %}{{metal.residue_name}}">{{charge_dict|get_value_from_dict:metal.residue_name}}</a></p>
+          </div>
+          {%endif%}
+
+          {%if representative is True%}
+          <div class=card-content>
+            <p class='center'><a href="{% url 'statistics' %}{{metal.residue_name}}/True">{{charge_dict|get_value_from_dict:metal.residue_name}}</a></p>
+        </div>
+        {%endif%}
+
+        </div>
+      </div>
+
+      {% endif %}
+      {% endfor %}
+      {% endfor %}
+      </div>
+    </div>
+</li>
+
+
+
+  <li>
+  <div class="collapsible-header"><i class="material-icons iconadd">add</i>
+             <i class="material-icons iconremove">remove</i>Bound amino acid or nucleotide residues</div>
+  <div class="collapsible-body">
+  <div class="row">
+    {% for code in all_codes %}
+    <div class="col s12 m3 l4 xl2">
+      <div class="card white ">
+        <div class=card-content>
+            <p class='center'><a href="/search_metal_site/?binding_family={{code}}">{{code}}</a></p>
+            <p class= "center">{{all_codes|get_value_from_dict:code}}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  </div>
+  </li>
+
+
+
+</ul>
+</div>
+</div>
+
+
+<div class="row">
+  <div class="col s12 m6 l6 xl6">
+    <div class="card white large">
+        <div class=card-content>
+          <span class="card-title">Interfaces in RCSB PDB</span>
+          <div><canvas id="pie-chart" height='400px'></canvas></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l6 xl6">
+    <div class="card white large">
+      <div class=card-content>
+        <span class="card-title">Structures containing metals at interface</span>
+        <div><canvas id="year" height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+      <div class=card-content>
+          <span class="card-title"> Bond lengts for metals and liganding atom pairs</span>
+          <div><canvas id="population-chart" height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+        <div class=card-content>
+          <span class="card-title">Bound residues in metal-involved interfaces</span>
+          <div><canvas id="binding_family"height='400px'></canvas></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+      <div class=card-content>
+        <span class="card-title">Residues coordinating metals at interfaces</span>
+        <div><canvas id="residues" height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+      <div class=card-content>
+        <span class="card-title">Classification of PDBs containing metal-involved interface</span>
+        <div><canvas id="classification"height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+        <div class=card-content>
+          <span class="card-title">Gene source for structures containing metal-involved interface</span>
+          <div><canvas id="organisms"height='400px'></canvas></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="col s12 m6 l6 xl4">
+    <div class="card white large">
+      <div class=card-content>
+        <span class="card-title">Structure acquisition methods</span>
+        <div><canvas id="techniques" height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+
+
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+
+
+
+<script>
+  var elem = document.querySelector('.collapsible.expandable');
+  var instance = M.Collapsible.init(elem, {
+    accordion: false
+  });
+
+
+
+window.onload = function() {
+  //
+  var ctx = document.getElementById("binding_family").getContext('2d');
+  var firstChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      datasets:
+
+      [{
+        data: {{ family_count }}, //
+        backgroundColor:'#4db6ac',
+        label: '# OF SITES', //
+      },
+      ],
+      //labels: {{family_names}} // not working, don't know why
+      labels: [{% for i in family_names %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'FAMILY NAME'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+        //    ticks: {
+          //      stepSize: 10
+          //    },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF SITES'
+            }
+        }]
+    }
+
+    }
+  });
+
+  //
+  var ctx2 = document.getElementById("population-chart").getContext('2d');
+
+  var secondChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      datasets: [
+
+      { barThickness: 3,
+        data: {{ bond_length_s }},
+        backgroundColor:'#ffff00',
+        label: 'S BOND LENGTHS',
+        labels: {{ labels_s }}
+      },
+      { barThickness: 3,
+        data: {{ bond_length_n }},
+        backgroundColor:'#00b0ff',
+        label: 'N BOND LENGHTS',
+        labels: {{ labels_n }}
+      },
+
+      { barThickness: 3,
+        data: {{ bond_length_o }},
+        backgroundColor:'#ff1744',
+        label: 'O BOND LENGTHS',
+        labels: {{ labels_o }}
+      },
+
+      {
+        barThickness: 3,
+        data: {{ bond_length }},
+        backgroundColor: '#9e9e9e',
+        hoverBackgroundColor: '#00695c',
+        label: 'ALL BOND LENGTHS',
+        labels: {{ labels_histo }}
+      }
+
+      ],
+      labels: {{ labels_histo }}
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            ticks: {
+                min: 1,
+                max: 3,
+                stepSize: 0.5
+              },
+            scaleLabel: {
+              display: true,
+              labelString: 'BOND LENGTH [Å]'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            //ticks: {
+              //  stepSize: 10
+              //},
+            scaleLabel: {
+              display: true,
+              labelString: '# OF BONDS'
+            }
+        }]
+    }
+
+    }
+  });
+  // pie chart, element in inerfaces over the rest
+
+  var ctx3 = document.getElementById("pie-chart").getContext('2d');
+
+  var thirdChart = new Chart(ctx3, {
+    type: 'pie',
+    data: {
+      datasets: [{
+        data: {{data}},
+        backgroundColor: ['#ff9100', '#00b0ff', '#7e57c2'],
+        label: 'STRUCTURES WITH INTERFACE'
+      }],
+      labels: [{% for i in labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+
+
+
+  // bar graph, classification data
+
+  var ctx4 = document.getElementById("classification").getContext('2d');
+
+  var fourthChart = new Chart(ctx4, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        data: {{classification_data}},
+        backgroundColor: '#fbc02d ',
+        label: 'STRUCTURE CLASSIFICATION'
+      }],
+      labels: [{% for i in classification_labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'CLASS'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+          //  ticks: {
+              //  stepSize: 10
+            //  },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF STRUCTURES'
+            }
+        }]
+    }
+
+    }
+  });
+
+  // bar graph, orgamism data
+
+  var ctx5 = document.getElementById("organisms").getContext('2d');
+
+  var fifthChart = new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        data: {{organism_data}},
+        backgroundColor: '#ba68c8',
+        label: 'GENE ORGANISM SOURCE'
+      }],
+      labels: [{% for i in organism_labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'ORGANISM'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+          //  ticks: {
+          //      stepSize: 10
+          //    },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF STRUCTURES'
+            }
+        }]
+    }
+
+    }
+  });
+
+  // bar graph, techniques data
+
+  var ctx5 = document.getElementById("techniques").getContext('2d');
+
+  var fifthChart = new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        data: {{techniqes_data}},
+        backgroundColor: '#CC0000',
+        label: 'STRUCTURE ACQUISITION TECHNIQUE'
+      }],
+      labels: [{% for i in techniqes_labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'TECHNIQUE'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+          //  ticks: {
+          //      stepSize: 10
+          //    },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF STRUCTURES'
+            }
+        }]
+    }
+
+    }
+  });
+
+  // bar graph, cooordinating residues data
+
+  var ctx6 = document.getElementById("residues").getContext('2d');
+
+  var sixthChart = new Chart(ctx6, {
+    type: 'bar',
+    data: {
+      datasets: [{
+        data: {{residues_data}},
+        backgroundColor: '#4caf50',
+        label: 'COORDINATING RESIDUES'
+      }],
+      labels: [{% for i in residues_labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'RESIDUE'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+        //    ticks: {
+        //        stepSize: 10
+        //      },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF RESIDUES'
+            }
+        }]
+    }
+
+    }
+  });
+
+  // line graph, deposition date
+
+  var ctx8 = document.getElementById("year").getContext('2d');
+
+  var sixthChart = new Chart(ctx8, {
+    type: 'line',
+    data: {
+      datasets: [{
+        data: {{year_data}},
+        backgroundColor: '#311b92',
+        fill: 'False',
+        label: 'DEPOSITED STRUCTURES'
+      }],
+      labels: [{% for i in year_labels %}"{{ i }}",{% endfor %}]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      scales: {
+        xAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'YEAR'
+            }
+
+
+        }],
+        yAxes: [{
+            gridLines: {
+                drawOnChartArea: false
+            },
+            scaleLabel: {
+              display: true,
+              labelString: '# OF STRUCTURES'
+            }
+        }]
+    }
+  }
+  });
+
+
+
+
+}
+
+</script>
+
+
+
+
+
+<div class =center>
+Last database update: {{update_date}}
+</div>
+{% endblock %}

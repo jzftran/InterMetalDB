@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load bootstrap3 %}
+
+
+
+{% block content %}
+<div class="row">
+
+  <div class="col s12 m12 l12">
+    <div class="card white">
+      <div class=card-content>
+
+      {% if filter %}
+          <form action="" method="get" class="form form-inline">
+              {% bootstrap_form filter.form layout='inline' %}
+              {% bootstrap_button 'Search' %}
+          </form>
+      {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<div class="row">
+
+  <div class="col s12 m12 l12">
+    <div class="card white">
+      <div class=card-content>
+
+        {% render_table table 'django_tables2/bootstrap-responsive.html' %}
+        {% load querystring from django_tables2 %}
+
+      </div>
+    </div>
+    <a href="{% querystring '_export'='csv' %}">{% bootstrap_button 'Download CSV file' %}</a>
+
+    <a href="{% querystring '_export'='json' %}">{% bootstrap_button 'Download json file' %}</a>
+  </div>
+
+</div>
+
+{% endblock %}

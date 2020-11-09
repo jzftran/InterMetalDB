@@ -1,0 +1,18 @@
+atomium
+rmsd
+msgpack
+numpy
+paramiko
+valerius
+scipy
+bcrypt
+cffi
+pycparser
+django
+sqlparse == 0.4.1
+pytz
+asgiref
+django-tables2
+django-filter
+tqdm
+tablib

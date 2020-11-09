@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+        {% if metal_site.id %}
+
+        {% endif %}
+        <div class="row">
+          <div class="col s12 m12">
+            <div class="card white">
+              <div class="card-content">
+                <h4>{{metal.first.pdb.title}}</h4>
+              </div>
+            </div>
+        </div>
+          <div class="row">
+            <div  class="col s12 m6 l6" >
+            <div class="card white medium">
+              <div class="card-content">
+              <b>PDB ID:</b> <a href="/PDB_summary/{{metal.first.pdb.id}}/">{{metal.first.pdb.id}}</a><br>
+              <b>Metal site ID:</b> {{ metal_site.id }} <br>
+              <b>Bound amino acids or nucleotide residues:</b>   {{ metal_site.binding_family| linebreaksbr }}<br>
+              <b>Group identifier:</b>   {{ metal_site.pseudo_MFS| linebreaksbr }}<br>
+              <b>Is homomeric:</b> {{ metal_site.is_homomer|linebreaksbr }} <br>
+              <b>Amino acid or nucleotide residue IDs:</b> {{ metal_site.residue_ids|linebreaksbr }} <br>
+              <b>All ligands IDs:</b> {{ metal_site.all_residue_ids|linebreaksbr }} <br>
+              <b>Number of coordingating amino acids or nucleoride residues:</b> {{ metal_site.number_of_coordinating_aminoacid_residues|linebreaksbr }} <br>
+              <b>Number of coordingating ligands:</b> {{ metal_site.number_of_coordinating_residues|linebreaksbr }} <br>
+              <b>Number of coordingating chains:</b> {{ metal_site.number_of_coordinating_chains|linebreaksbr }} <br>
+              <b>Number of coordingating chains:</b> {{ metal_site.number_of_coordinating_chains|linebreaksbr }} <br>
+            </div>
+            </div>
+            </div>
+            <div  class="col s12 m6 l6" >
+            <div class="card white medium">
+              <div class="card-content ">
+              <b>Representative metal site in the group:</b> <a href="/metal_site_summary/{{representative_id.first.id}}/">{{representative_id.first.id}}</a><br>
+              {%if non_representative_ids%}
+              <b>Similar binding_sites:</b>
+              <table class="tableBodyScroll">
+                <th>Metal site id</th><th>Bound amino acids</th><th>Bound ligands IDs</th>
+
+              {%for binding_site in non_representative_ids%}
+
+               <tr><td><a href="/metal_site_summary/{{binding_site.id}}/">{{binding_site.id}}</a></td><td>{{binding_site.binding_family}}</td>
+               <td>{{binding_site.all_residue_ids}}</td>
+              </tr>
+               {%endfor%}
+              </table>
+              {%else%}
+                <p>No similar sites found.</p>
+               {%endif%}
+            </div>
+            </div>
+            </div>
+
+            </div>
+
+            </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<div class="row">
+  <div class="col s12 m12">
+    <div class="card white">
+      <div class="card-content">
+
+
+        <div id="viewport" style="width:100%; height:50%;"></div>
+      </div>
+      </div>
+      </div>
+      </div>
+      <script src="https://cdn.rawgit.com/arose/ngl/v2.0.0-dev.32/dist/ngl.js"></script>
+      <script>
+      // Setup to load data from rawgit
+      NGL.DatasourceRegistry.add(
+          "data", new NGL.StaticDatasource( "//cdn.rawgit.com/arose/ngl/v2.0.0-dev.32/data/" )
+      );
+
+      // Create NGL Stage object
+      var stage = new NGL.Stage( "viewport" );
+
+      // Handle window resizing
+      window.addEventListener( "resize", function( event ){
+          stage.handleResize();
+      }, false );
+      stage.setParameters({
+        backgroundColor: "white"
+      })
+
+      function addElement (el) {
+        Object.assign(el.style, {
+          position: "absolute",
+          zIndex: 10
+        })
+        stage.viewer.container.appendChild(el)
+      }
+
+      function createElement (name, properties, style) {
+        var el = document.createElement(name)
+        Object.assign(el, properties)
+        Object.assign(el.style, style)
+        return el
+      }
+
+      function createSelect (options, properties, style) {
+        var select = createElement("select", properties, style)
+        options.forEach(function (d) {
+          select.add(createElement("option", {
+            value: d[ 0 ], text: d[ 1 ]
+          }))
+        })
+        return select
+      }
+
+      function createFileButton (label, properties, style) {
+        var input = createElement("input", Object.assign({
+          type: "file"
+        }, properties), { display: "none" })
+        addElement(input)
+        var button = createElement("input", {
+          value: label,
+          type: "button",
+          onclick: function () { input.click() }
+        }, style)
+        return button
+      }
+
+      var topPosition = 12
+
+      function getTopPosition (increment) {
+        if (increment) topPosition += increment
+        return topPosition + "px"
+      }
+
+      // create tooltip element and add to document body
+      var tooltip = document.createElement("div")
+      Object.assign(tooltip.style, {
+        display: "none",
+        position: "fixed",
+        zIndex: 10,
+        pointerEvents: "none",
+        backgroundColor: "rgba( 0, 0, 0, 0.6 )",
+        color: "lightgrey",
+        padding: "8px",
+        fontFamily: "sans-serif"
+      })
+      document.body.appendChild(tooltip)
+
+
+
+      stage.signals.clicked.add(function (pickingProxy) {
+        if (pickingProxy && (pickingProxy.atom || pickingProxy.bond)) {
+          console.log(pickingProxy.atom || pickingProxy.closestBondAtom)
+        }
+      })
+
+      var ligandSele = "( not polymer or not ( protein or nucleic ) ) and not ( water or ACE or NH2 )"
+
+      var pocketRadius = 0
+      var pocketRadiusClipFactor = 1
+
+      var cartoonRepr, spacefillRepr, neighborRepr, ligandRepr, contactRepr, pocketRepr, labelRepr
+
+      var struc
+      var neighborSele
+      var sidechainAttached = false
+
+      function loadStructure (input) {
+        struc = undefined
+        stage.setFocus(0)
+        stage.removeAllComponents()
+
+
+
+        return stage.loadFile(input).then(function (o) {
+          struc = o
+
+          o.autoView()
+          cartoonRepr = o.addRepresentation("cartoon", {
+            sele: '/0',
+            visible: true,
+            assembly: "BU{{metal.first.pdb.assembly}}",
+
+          })
+
+          backboneRepr = o.addRepresentation("backbone", {
+            visible: true,
+            colorValue: "lightgrey",
+            radiusScale: 2
+          })
+          spacefillRepr = o.addRepresentation("spacefill", {
+            sele: ligandSele,
+            visible: true,
+
+          })
+          neighborRepr = o.addRepresentation("ball+stick", {
+            sele: "none",
+            aspectRatio: 1.1,
+            colorValue: "lightgrey",
+            multipleBond: "symmetric"
+          })
+          ligandRepr = o.addRepresentation("ball+stick", {
+            multipleBond: "symmetric",
+            colorValue: "grey",
+            sele: "none",
+            aspectRatio: 1.2,
+            radiusScale: 2.5
+          })
+          contactRepr = o.addRepresentation("contact", {
+            sele: "none",
+            radiusSize: 0.07,
+            weakHydrogenBond: false,
+            waterHydrogenBond: false,
+            backboneHydrogenBond: true
+          })
+
+
+
+          labelRepr = o.addRepresentation("label", {
+            sele: "none",
+            color: "#333333",
+            yOffset: 0.2,
+            zOffset: 2.0,
+            attachment: "bottom-center",
+            showBorder: true,
+            borderColor: "lightgrey",
+            borderWidth: 0.25,
+            disablePicking: true,
+            radiusType: "size",
+            radiusSize: 0.8,
+            labelType: "residue",
+            labelGrouping: "residue"
+          })
+        })
+      }
+
+
+
+
+
+
+      function showLigand (sele) {
+        var s = struc.structure
+
+        var withinSele = s.getAtomSetWithinSelection(new NGL.Selection(sele), 5)
+        var withinGroup = s.getAtomSetWithinGroup(withinSele)
+        var expandedSele = withinGroup.toSeleString()
+        expandedSele =  "(" + expandedSele + ")  and /0"
+        neighborSele = "(" + expandedSele + ") and not (" + sele + ") and /0"
+        //neighborSele = expandedSele
+
+        var sview = s.getView(new NGL.Selection(sele))
+        pocketRadius = Math.max(sview.boundingBox.getSize().length() / 2, 2) + 5
+        var withinSele2 = s.getAtomSetWithinSelection(new NGL.Selection(sele), pocketRadius + 2)
+        var neighborSele2 = "(" + withinSele2.toSeleString() + ") and not (" + sele + ") and polymer and /0"
+
+        backboneRepr.setParameters({ radiusScale: 0.2 })
+        backboneRepr.setVisibility(false)
+        spacefillRepr.setVisibility(false)
+
+        ligandRepr.setVisibility(true)
+        neighborRepr.setVisibility(true)
+        contactRepr.setVisibility(true)
+
+
+
+        ligandRepr.setSelection(sele)
+        neighborRepr.setSelection(
+          sidechainAttached ? "(" + neighborSele + ") and (sidechainAttached or not polymer) and /0" : neighborSele
+        )
+        contactRepr.setSelection(expandedSele )
+
+        labelRepr.setSelection("(" + neighborSele + ") and not (water or ion) and /0" )
+
+        struc.autoView(expandedSele, 2000)
+      }
+
+
+      loadStructure("rcsb://{{metal.first.pdb.id}}").then(function () {
+        showLigand(" :{{metal.first.chain_id}} and {{metal.first.residue_number}} and /0")
+      })
+      </script>
+
+
+{% endblock %}
