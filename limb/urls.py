@@ -13,7 +13,6 @@ from limb.views import FilteredMetalSiteListView
 
 
 
-
 urlpatterns = [
     path('', views.index, name='index'),
     url(r'^search/$', FilteredPdbListView.as_view(), name="search"),
@@ -24,6 +23,15 @@ urlpatterns = [
     path('statistics/representative', views.generate_element_graphs, {'representative':'representative'}, name='representative'),
     url(r'^statistics/(?P<name>\w+)/(?P<representative>\w+)/$',views.generate_element_graphs, {'representative':'representative'}, name='representative_element'),
     path('statistics/<str:name>/', views.generate_element_graphs, name='generate_element_graphs'),
+
     path('about', views.about, name='about'),
     path('references', views.references, name='references'),
+
+    path('csv', views.some_streaming_csv_view, name='some_streaming_csv_view'),
+
+    path('csv/', views.some_streaming_csv_view, name='csv'),
+    path('csv/representative', views.some_streaming_csv_view, {'representative':'representative'}, name='representative'),
+    url(r'^csv/(?P<name>\w+)/(?P<representative>\w+)/$',views.some_streaming_csv_view, {'representative':'representative'}, name='representative_element'),
+    path('csv/<str:name>/', views.some_streaming_csv_view, name='some_streaming_csv_view'),
+
 ]

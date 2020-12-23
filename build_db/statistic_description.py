@@ -1,4 +1,5 @@
 """Contains instructions  to generate """
+
 # %% load functions
 
 import sys
@@ -23,7 +24,8 @@ import datetime
 import requests
 import numpy as np
 from collections import Counter
-
+import operator
+from django.db.models import Q
 ### opis
 from scipy.stats import fisher_exact
 import matplotlib.pyplot as plt
@@ -177,8 +179,36 @@ def get_number_of_sites(element = None, representative=None):
     return element, number_of_sites
 
 
+def DB_comp(**filter_param):
+    database_composition = DBcomposition.objects.filter(**filter_param).latest('id')
+    return [database_composition.DNA_protein_RNA,
+    database_composition.DNA_protein,
+    database_composition.DNA_RNA ,
+    database_composition.protein_RNA ,
+    database_composition.protein_protein,
+    database_composition.DNA_DNA  ,
+    database_composition.RNA_RNA  ,
+    database_composition.other_complexes ,
+    database_composition.representative,
+    database_composition.element ]
 
+    def number_of_PDB_interfaces(**filter_param):
+        database_composition = DBcomposition.objects.filter(**filter_param)
 
+        database_count = Pdb.objects.filter(has_metal_interface=True, ready_for_presentation=True).count()
+        scraping_date = MetaDataPDB.objects.latest("scraping_date").scraping_date
+        newest_record = MetaDataPDB.objects.latest("scraping_date")
+        metals_in_pdb =getattr(newest_record, 'metals_in_pdb')
+        no_metal = getattr(newest_record, 'no_metal')
+        has_metal_no_interface = Pdb.objects.filter(has_metal_interface=False).count()
+        Pdbs_with_representative_sites= Pdb.objects.filter(metalsite__representative=True, ready_for_presentation=True).distinct().count()
+        update_date = MetaDataPDB.objects.latest("update_date").update_date
+        DBcomposition.objects.latest('id').DNA_protein_RNA
+        'DNA-protein-RNA', 'DNA-protein', 'DNA-RNA', 'protein-RNA', 'protein-protein', 'DNA-DNA', 'RNA-RNA', 'other complexes'
+        if representative ==True:
+            return  [Pdbs_with_representative_sites, database_count-Pdbs_with_representative_sites], scraping_date, update_date
+        else:
+            return [database_count, has_metal_no_interface, int(no_metal)], scraping_date, update_date
 ### get coordination_numbers
 
 def get_coordination_numbers(element = None, representative=None):
@@ -246,6 +276,62 @@ def get_residues(element = None, representative = None):
     return (element, residues_data, residues_labels)
 
 
+
+
+
+
+
+def get_DB_composition(**filter_param):
+    """Returns querysets of complexes with certain compostion. Protein-protein, protein-DNA etc. """
+    #  https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/primary-sequences-and-the-pdb-format
+    # So far atomium does not contain type identification, thus type finding is more complicated
+    amino_acids= ['ALA.', 'CYS.', 'ASP.', 'GLU.', 'PHE.', 'GLY.', 'HIS.', 'ILE.', 'LYS.', 'LEU.', 'MET.', 'ASN.', 'PRO.', 'GLN.', 'ARG.', 'SER.', 'THR.', 'VAL.', 'TRP.', 'TYR.']
+    deoxyribonucleotides = ['DA.', 'DC.', 'DG.', 'DT.', 'DI.']
+
+    ribonucleotides = [r'(?<!.)A\.', r'(?<!.)C\.', r'(?<!.)G\.', r'(?<!.)U\.', r'(?<!.)I\.', r'^A\.', r'^C\.', r'^G\.', r'^U\.', r'^I\.', r'\.A\.', r'\.C\.', r'\.G\.', r'\.U\.', r'\.I\.']
+    #DNA Protein RNA complexes
+    DPR = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__regex=x) for x in ribonucleotides)), **filter_param, ready_for_presentation=True).filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in deoxyribonucleotides))).filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in amino_acids)))
+
+    # DNA Protein complexes
+    DP = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in deoxyribonucleotides)), **filter_param, ready_for_presentation=True).filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in amino_acids)))
+    DP = DP.difference(DPR)
+
+    # DNA RNA
+    DR = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__regex=x) for x in ribonucleotides)), **filter_param, ready_for_presentation=True).filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in deoxyribonucleotides)))
+    DR = DR.difference(DPR)
+
+    # Protein RNA
+    PR = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__regex=x) for x in ribonucleotides)), **filter_param, ready_for_presentation=True).filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in amino_acids)))
+    PR = PR.difference(DPR)
+
+
+    # Protein protein
+    PP = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in amino_acids)), **filter_param, ready_for_presentation=True)
+    PP = PP.difference(DP, DR, PR, DPR)
+
+
+    # DNA DNA
+    DD = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__icontains=x) for x in deoxyribonucleotides)), **filter_param, ready_for_presentation=True)
+    DD = DD.difference(DP, DR, PR, DPR)
+
+
+    # RNA RNA
+    RR = MetalSite.objects.filter(reduce(operator.or_, (Q(aminoacid_residue_names__regex=x) for x in ribonucleotides)), **filter_param, ready_for_presentation=True)
+    RR = RR.difference(DP, DR, PR, DPR)
+
+    DP =len(DP)
+    DR = len(DR)
+    PR = len(PR)
+    PP = len(PP)
+    DD= len(DD)
+    RR= len(RR)
+    DPR = len(DPR)
+    #other_complexes
+    other_complexes = MetalSite.objects.filter(**filter_param, ready_for_presentation=True).count()
+
+
+
+    return {'DPR':DPR, 'DP':DP, 'DR':DR, 'PR':PR, 'PP':PP, 'DD':DD, 'RR':RR, 'other_complexes':other_complexes-DPR-DP-DR-PR-PP-DD-RR }
 
 
 def autolabel(rects):

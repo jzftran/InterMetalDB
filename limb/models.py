@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.shortcuts import reverse
 
 class Pdb(models.Model):
 
@@ -23,7 +23,8 @@ class Pdb(models.Model):
     has_metal_interface = models.BooleanField(default = False, blank=False)
     ready_for_presentation = models.BooleanField(default = False, blank=False) #data for the database has been downloaded for chemical identifier, so it is not a full picture of whole RCSB PDB database, even though some of the record contain not only standalone ions, this ensures that in the dabase are presented only standalone ions
 
-
+    def get_absolute_url(self):
+        return reverse('PDB_summary', kwargs={'id':self.id})
 
 
 class MetalSite(models.Model):
@@ -51,7 +52,8 @@ class MetalSite(models.Model):
     representative = models.BooleanField(default = False, blank = True, null =True)
     ready_for_presentation = models.BooleanField(default = False, blank=False) #data for the database has been downloaded for chemical identifier, so it is not a full picture of whole RCSB PDB database, even though some of the record contain not only standalone ions, this ensures that in the dabase are presented only standalone ions
 
-
+    def get_absolute_url(self):
+        return reverse('metal_site_summary', kwargs={'id':self.id})
 
 class Metal(models.Model):
     """A metal atom model."""
@@ -127,3 +129,20 @@ class MetaDataPDB(models.Model):
     no_metal = models.IntegerField()
     scraping_date = models.DateField(null=True, blank=True)
     update_date = models.DateField(null=True, blank=True)
+
+
+class DBcomposition(models.Model):
+    """DB composition"""
+    class Meta:
+        db_table =  "DBcomposition"
+
+    DNA_protein_RNA = models.IntegerField()
+    DNA_protein = models.IntegerField()
+    DNA_RNA = models.IntegerField()
+    protein_RNA = models.IntegerField()
+    protein_protein = models.IntegerField()
+    DNA_DNA = models.IntegerField()
+    RNA_RNA = models.IntegerField()
+    other_complexes = models.IntegerField()
+    representative = models.BooleanField(null=True, blank=True)
+    element = models.CharField(max_length=64, null =True)

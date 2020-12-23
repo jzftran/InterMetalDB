@@ -16,6 +16,32 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 #from limb import views # imports views from limb
+
+from django.contrib.sitemaps.views import sitemap
+from limb.sitemaps import StaticViewSitemap
+from django.contrib.sitemaps import GenericSitemap
+# for sitemap
+from limb.models import Pdb
+from limb. models import MetalSite
+
+
+Pdb_dict = {
+    'queryset': Pdb.objects.filter(ready_for_presentation=True),
+}
+
+MetalSite_dict = {
+    'queryset': MetalSite.objects.filter(ready_for_presentation=True),
+}
+
+sitemaps = {
+
+    'static' : StaticViewSitemap,
+    'pdb': GenericSitemap(Pdb_dict, priority=0.5),
+    'metalsite': GenericSitemap(MetalSite_dict, priority=0.5),
+}
+
 urlpatterns = [
-    path('',include('limb.urls'))
+    path('',include('limb.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+
 ]
