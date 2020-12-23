@@ -262,6 +262,19 @@ try:
         organism_labels.append('OTHER')
         return (organism_data, organism_labels)
 
+    def DB_comp(**filter_param):
+        database_composition = DBcomposition.objects.filter(**filter_param).latest('id')
+        return [database_composition.DNA_protein_RNA,
+        database_composition.DNA_protein,
+        database_composition.DNA_RNA ,
+        database_composition.protein_RNA ,
+        database_composition.protein_protein,
+        database_composition.DNA_DNA  ,
+        database_composition.RNA_RNA  ,
+        database_composition.other_complexes]
+        #database_composition.representative,
+        #database_composition.element ]
+
 
 except:
   print("An exception occurred")

@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 {% load dict_tag %}
-
+{% load bootstrap3 %}
 
 <div class="row">
   <h5 class="center">Statistics for {{charge}}</h5>
@@ -86,7 +86,7 @@
 
 <div class="row">
 
-  <div class="col s12 m6 l6 xl6">
+  <div class="col s12 m6 l6 xl4">
     <div class="card white large">
       <div class=card-content>
         <span class="card-title">PDBs containing {{charge}} and other metals</span>
@@ -96,7 +96,7 @@
   </div>
 
 
-  <div class="col s12 m6 l6 xl6">
+  <div class="col s12 m6 l6 xl4">
     <div class="card white large">
       <div class=card-content>
         <span class="card-title">Structures containing {{charge}} at interface</span>
@@ -161,7 +161,14 @@
     </div>
   </div>
 
-
+  <div class="col s12 m12 l12 xl4">
+    <div class="card white large">
+      <div class=card-content>
+        <span class="card-title">Complex type in metal binding</span>
+        <div><canvas id="DB_composition" height='400px'></canvas></div>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -553,6 +560,28 @@ window.onload = function() {
 
 
 
+    // pie chart, DB composition
+
+    var ctx9 = document.getElementById("DB_composition").getContext('2d');
+
+    var ninthChart = new Chart(ctx9, {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{DB_composition}},
+          backgroundColor: ['#2884F6', '#2A3DD0', '#3D0099','#FFB3C2','#0e5058','#FF4F4D','#FF9100','#FFD000'],
+          label: 'STRUCTURES WITH INTERFACE'
+        }],
+        labels: [{% for i in DB_composition_labels %}"{{ i }}",{% endfor %}]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+
+
+
 
 
 
@@ -560,9 +589,23 @@ window.onload = function() {
 
 </script>
 
+{%if representative is True%}
+<div class =center>
+    <a href="{% url 'csv'  %}{{name|upper}}/representative">{% bootstrap_button 'Download statistics' %}</a>
+</div>
+{%endif%}
 
 
+{%if representative is not True%}
 
 
+<div class =center>
+    <a href="{% url 'csv'  %}{{name|upper}}">{% bootstrap_button 'Download statistics' %}</a>
+</div>
+{%endif%}
 
+
+<div class =center>
+Last database update: {{update_date}}
+</div>
 {% endblock %}

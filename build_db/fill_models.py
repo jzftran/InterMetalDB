@@ -205,3 +205,21 @@ def add_metalPDB_Data(metals_in_pdb, no_metal, scraping_date, update_date):
     scraping_date = scraping_date,
     update_date = update_date
     )
+
+
+def add_DBcomposition(DNA_protein_RNA, DNA_protein, DNA_RNA, protein_RNA,protein_protein,DNA_DNA,RNA_RNA,other_complexes,representative,element):
+    """Gets meta data about this database and RCSB database. Used in
+    statistics view generation."""
+
+    return DBcomposition.objects.create(
+    DNA_protein_RNA = DNA_protein_RNA,
+    DNA_protein = DNA_protein,
+    DNA_RNA = DNA_RNA,
+    protein_RNA = protein_RNA,
+    protein_protein = protein_protein,
+    DNA_DNA = DNA_DNA,
+    RNA_RNA = RNA_RNA,
+    other_complexes = other_complexes,
+    representative = representative,
+    element = element
+    )
