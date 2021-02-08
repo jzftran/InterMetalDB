@@ -16,3 +16,5 @@ django-tables2
 django-filter
 tqdm
 tablib
+django-widget-tweaks
+django-bootstrap3
