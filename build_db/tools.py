@@ -223,14 +223,14 @@ def delete_duplicated_atoms(atoms):
                 relevant_atoms.add(atom)
 
         relevant_atoms = list(relevant_atoms)
-        for atom in relevant_atoms:
-            for atom2 in relevant_atoms[1:]:
-                if atom2 !=atom:
-                    if atom.distance_to(atom2) <1:
-                        relevant_atoms.remove(atom2)
-        unique_atoms.update(relevant_atoms)
-    return unique_atoms
 
+        for a in relevant_atoms:
+            for b in relevant_atoms:
+                if a is not b:
+                    if a.distance_to(b)<1:
+                        relevant_atoms.remove(a)
+    unique_atoms.update(relevant_atoms)
+    return unique_atoms
 #from limb.models import Chains
 #def chains_to_fasta():
 #    lines =[]
