@@ -210,12 +210,3 @@ def delete_duplicated_atoms(atoms):
                         relevant_atoms.remove(a)
     unique_atoms.update(relevant_atoms)
     return unique_atoms
-#from limb.models import Chains
-#def chains_to_fasta():
-#    lines =[]
-#    for chain in Chain.objects.all():
-#        lines.append(">"+str(chain.id))
-#        lines.append(chain.sequence)
-#    return lines
-#
-#fasta = chains_to_fasta()
