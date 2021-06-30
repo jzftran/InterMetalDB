@@ -94,27 +94,6 @@ def metal_of_interest_outside_model(model, pdb):
 
 
 
-#def get_atom_liganding_atoms(metal,def_cutoff=3, pseudo_MFS=False):
-#    """Atoms coordinating metal ions in proteins rarely create angle less than 45 degrees
-#    between other atoms with metal ion as a vertex. Such atom is remved from the list.
-#    Because metals are not coordinated by carbon, hydrogen atoms, these are removed in the first place.
-#    Starting with the closest atom, angle check is performed for the rest of atoms."""
-#    nearby_atoms = []
-#    for atom in metal.nearby_atoms(cutoff=def_cutoff, is_metal=False):
-#        if pseudo_MFS == False:
-#            if atom.element not in "CH":
-#                nearby_atoms.append(atom)
-#        else:
-#            nearby_atoms.append(atom)
-#    nearby_atoms = list(delete_duplicated_atoms(nearby_atoms))
-#    nearby_atoms.sort(key=lambda atom: atom.distance_to(metal))
-#    if pseudo_MFS == False:
-#        for atom in nearby_atoms:
-#            for atom2 in nearby_atoms[1:]:
-#                if atom2 !=atom:
-#                    if metal.angle(atom, atom2) <math.pi / 4:
-#                        nearby_atoms.remove(atom2)
-#    return nearby_atoms
 
 
 def get_atom_liganding_atoms(metal,def_cutoff=3, pseudo_MFS=False):
