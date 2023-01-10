@@ -31,11 +31,7 @@ urlpatterns = [
 
     path('csv/', views.some_streaming_csv_view, name='csv'),
     path('csv/representative', views.some_streaming_csv_view, {'representative':'representative'}, name='representative'),
-<<<<<<< HEAD
     re_path(r'^csv/(?P<name>\w+)/(?P<representative>\w+)/$',views.some_streaming_csv_view, {'representative':'representative'}, name='representative_element'),
-=======
-    url(r'^csv/(?P<name>\w+)/(?P<representative>\w+)/$',views.some_streaming_csv_view, {'representative':'representative'}, name='representative_element'),
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
     path('csv/<str:name>/', views.some_streaming_csv_view, name='some_streaming_csv_view'),
 
 ]

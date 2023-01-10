@@ -39,40 +39,35 @@ def fetch_PDB_codes(date):
       ]
     },
     "request_options": {
-<<<<<<< HEAD
+
         "return_counts": true
-=======
+
         "return_all_hits": true
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
+
     },
     "return_type": "entry"
     }'''
 
     query_string= json.loads(string)
-<<<<<<< HEAD
+
     url = 'https://search.rcsb.org/rcsbsearch/v2/query'
-=======
-    url = 'http://search.rcsb.org/rcsbsearch/v1/query'
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
+
 
     response = requests.post(url,json=query_string)
 
     if response.status_code == 200: #request has succeeded
         jsonresponse = response.json()
-<<<<<<< HEAD
+
         return jsonresponse['total_count']
-=======
+
         return [jsonresponse['result_set'][code]['identifier'] for code in range(jsonresponse['total_count'])]
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
+
 
     raise Exception("No fetched codes from RCSB.")
 
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
 with_metals_no_interface = Pdb.objects.filter(has_metal_interface=False).count()
 with_metal_interface = Pdb.objects.filter(has_metal_interface=True).count()
 database_count = Pdb.objects.all().count()
@@ -83,11 +78,11 @@ newest_deposition_date = Pdb.objects.latest("deposition_date").deposition_date
 
 
 
-<<<<<<< HEAD
+
 pdb_count = fetch_PDB_codes(newest_deposition_date)
-=======
+
 pdb_count = len(fetch_PDB_codes(newest_deposition_date))
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
+
 no_metal = int(pdb_count) - int(database_count)
 update_date = datetime.date.today()
 #save results to the database
@@ -164,8 +159,6 @@ for metal in all_elements:
     add_DBcomposition(*composition_statistics,representative=True, element = metal)
     composition_statistics = get_DB_composition(element = metal)
     add_DBcomposition(*composition_statistics,representative=None, element = metal)
-<<<<<<< HEAD
+
 print("Categorizing DB succeeded.")
 make_log(f"DB categorization has succeded at:{datetime.now()}")
-=======
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
