@@ -15,7 +15,7 @@ pip install -r requirements.txt
 2. Run the Django migrations
 ```
 python manage.py makemigrations
-python manage.py makemigrations polls
+python manage.py makemigrations limb
 python manage.py migrate
 ```
 
