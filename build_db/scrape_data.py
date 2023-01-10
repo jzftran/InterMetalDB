@@ -13,7 +13,7 @@ from django.db.models import Q
 
 
 def fetch_PDB_codes(date):
-    date = date.strftime('%Y-%m-%dT%H:%M:%S')
+    #date = date.strftime('%Y-%m-%dT%H:%M:%S')
     """Fetchs PDB codes for all structures with metal ion in them.
     If the response returned has an 500 error code, an error will
     be comunicated. """
@@ -35,21 +35,22 @@ def fetch_PDB_codes(date):
       ]
     },
     "request_options": {
-        "return_all_hits": true
+        "return_counts": true
     },
     "return_type": "entry"
     }'''
 
     query_string= json.loads(string)
-    url = 'http://search.rcsb.org/rcsbsearch/v1/query'
+    url = 'https://search.rcsb.org/rcsbsearch/v2/query'
 
     response = requests.post(url,json=query_string)
 
     if response.status_code == 200: #request has succeeded
         jsonresponse = response.json()
-        return [jsonresponse['result_set'][code]['identifier'] for code in range(jsonresponse['total_count'])]
+        return jsonresponse['total_count']
 
     raise Exception("No fetched codes from RCSB.")
+
 
 
 
@@ -63,7 +64,7 @@ newest_deposition_date = Pdb.objects.latest("deposition_date").deposition_date
 
 
 
-pdb_count = len(fetch_PDB_codes(newest_deposition_date))
+pdb_count = fetch_PDB_codes(newest_deposition_date)
 no_metal = int(pdb_count) - int(database_count)
 update_date = datetime.date.today()
 #save results to the database
@@ -140,3 +141,5 @@ for metal in all_elements:
     add_DBcomposition(*composition_statistics,representative=True, element = metal)
     composition_statistics = get_DB_composition(element = metal)
     add_DBcomposition(*composition_statistics,representative=None, element = metal)
+print("Categorizing DB succeeded.")
+make_log(f"DB categorization has succeded at:{datetime.now()}")

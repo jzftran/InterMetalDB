@@ -10,10 +10,44 @@ from fill_models import *
 from tools import *
 
 
+def delete_duplicated_atoms(atoms):
+    """Sometimes PDB files can have multiple representations of the same atom.
+    In order to remove this duplicated atoms given set of atoms is transformed into a different elements set
+    list, then every atom is compared with every atom in the mono-element list. From each elements list unique atoms are
+    returned, and combined in unique atoms set. Uniqueness is estimated by checking if atoms are closer than 1 Angstrom.
+    """
+
+    unique_atoms = set()
+    elements = set([m.element for m in atoms])
+    for element in elements:
+        relevant_atoms = set()
+        for atom in atoms:
+            if atom.element == element:
+                relevant_atoms.add(atom)
+
+        relevant_atoms = list(relevant_atoms)
+
+        for a in relevant_atoms:
+            for b in relevant_atoms:
+                if a is not b:
+                    if a.distance_to(b)<1:
+                        relevant_atoms.remove(a)
+    unique_atoms.update(relevant_atoms)
+    return unique_atoms
+
+met= model.atoms(is_metal=True)
+
+
+
+
+
+delete_duplicated_atoms(met)
+
+
 def process_pdb(code):
 
     """Builds all the relevant objects for any given PDB code."""
-code = '1i94'
+    code = '3E7Y'
     # Fetch PDB, get lowest energy model, optimise distances in model
     pdb = atomium.fetch(code)
     model, assembly_id = sort_mod(pdb)
@@ -27,9 +61,14 @@ code = '1i94'
     for metal in sorted(metal_of_interest_outside_model(model, pdb), key=lambda metal: metal.id):
         add_metal_record(metal, pdb_record, omission="Metal is in an asymmetric unit but not in a biological assembly.")
 
+
+
+
+
+
     # Get all metals and remove duplicates
     metals = delete_duplicated_atoms(model.atoms(is_metal=True)) #removes duplicates metals, that may have been generated during symmetry operation
-
+    metals
     #get liganding atoms for every metal
     metals_with_liganding_atoms = dict()
     pseudo_MFS =dict()

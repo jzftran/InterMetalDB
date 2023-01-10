@@ -36,6 +36,7 @@ fasta = chains_to_fasta()
 
 with open('chains.fasta','w') as f:
     f.write(fasta)
+    f.close()
 
 #describes path to mmseqs
 

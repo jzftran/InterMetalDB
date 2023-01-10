@@ -34,7 +34,7 @@ def fetch_PDB_codes(metal_element):
         "nodes": [
         {
             "type": "terminal",
-            "service": "text",
+            "service": "text_chem",
             "parameters": {
             "operator": "exact_match",
             "value":"'''+metal_element+'''",
@@ -50,7 +50,7 @@ def fetch_PDB_codes(metal_element):
     }'''
     print(metal_element)
     query_string= json.loads(string)
-    url = 'https://search.rcsb.org/rcsbsearch/v1/query'
+    url = 'https://search.rcsb.org/rcsbsearch/v2/query'
     response = requests.post(url,json=query_string)
     if response.status_code == 200: #request has succeeded
         jsonresponse = response.json()
