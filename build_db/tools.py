@@ -50,7 +50,11 @@ def fetch_PDB_codes(metal_element):
     }'''
     print(metal_element)
     query_string= json.loads(string)
+<<<<<<< HEAD
     url = 'https://search.rcsb.org/rcsbsearch/v2/query'
+=======
+    url = 'https://search.rcsb.org/rcsbsearch/v1/query'
+>>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
     response = requests.post(url,json=query_string)
     if response.status_code == 200: #request has succeeded
         jsonresponse = response.json()
