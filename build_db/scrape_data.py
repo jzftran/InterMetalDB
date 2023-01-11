@@ -13,11 +13,9 @@ from django.db.models import Q
 
 
 def fetch_PDB_codes(date):
-<<<<<<< HEAD
-    #date = date.strftime('%Y-%m-%dT%H:%M:%S')
-=======
+
     date = date.strftime('%Y-%m-%dT%H:%M:%S')
->>>>>>> f7abedd3329e05636c6e31ca0ca59b3f1119c029
+
     """Fetchs PDB codes for all structures with metal ion in them.
     If the response returned has an 500 error code, an error will
     be comunicated. """

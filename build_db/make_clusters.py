@@ -42,14 +42,19 @@ with open('chains.fasta','w') as f:
 
 #mmseqs = r"/Users/jozeftran/mmseqs/bin/mmseqs"
 #mmseqs = "~/mmseqs/bin/mmseqs"
+#%%
+import subprocess
 mmseqs = r"C:\Users\jozef\Documents\MMseqs2-Windows-Unified\mmseqs\bin\mmseqs.exe"
-subprocess.call(mmseqs + " createdb chains.fasta DB",shell=True, stdout=subprocess.PIPE)
+run = subprocess.call(mmseqs + " createdb chains.fasta DB",shell=True, stdout=subprocess.PIPE)
+print(run)
+#%%
 #identity treshold 0.5, coverage 0.8, coverage mode 0 (query and targer)
-subprocess.call(mmseqs + " cluster DB DB_clu tmp --min-seq-id 0.5 -c 0.8 --cov-mode 0",shell=True, stdout=subprocess.PIPE)
+subprocess.call(mmseqs + " cluster DB DB_clu tmp --min-seq-id 0.5 -c 0.8 --cov-mode 0", shell=True)
 #output as tsv
+#%%
 subprocess.call(mmseqs + " createtsv DB DB DB_clu results.tsv", shell=True, stdout=subprocess.PIPE)
 clusters={}
-
+#%%
 
 #cluster chains in DB
 with open('results.tsv') as f:
