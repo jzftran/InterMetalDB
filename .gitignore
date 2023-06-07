@@ -1,0 +1,8 @@
+*secret_code.py
+*deploy.sh
+*.pyc
+*.DS_store
+*.pyc
+*.tiff
+*.sqlite3
+*deploy.py
