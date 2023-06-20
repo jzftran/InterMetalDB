@@ -32,6 +32,8 @@ def main():
             try:
                 with transaction.atomic(): process_pdb(pdb_id)
             except Exception as e: not_checked[pdb_id] = traceback.format_exc()  #adds PDB ID to log
+
+
         print("PDBs that could not be processed:\n")
         for pdb_id in not_checked:
             make_log(pdb_id)

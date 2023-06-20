@@ -94,6 +94,10 @@ for group_id in tqdm(group_ids):
         value[0].save()
 
 
+for metal in metal_list:
+    add_DBcomposition(element=metal, representative=True)
+    add_DBcomposition(element=metal, representative=False)
+
 
 make_log(f"Clustering has ended at:{datetime.now()}")
 #remove temporary files

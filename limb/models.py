@@ -1,3 +1,4 @@
+from typing import Iterable, Optional
 from django.db import models
 from django.shortcuts import reverse
 
@@ -21,10 +22,17 @@ class Pdb(models.Model):
     technique = models.CharField(null=True, blank=True, max_length=1024)
     assembly = models.IntegerField(null=True, blank=True)
     has_metal_interface = models.BooleanField(default = False, blank=False)
-    ready_for_presentation = models.BooleanField(default = False, blank=False) #data for the database has been downloaded for chemical identifier, so it is not a full picture of whole RCSB PDB database, even though some of the record contain not only standalone ions, this ensures that in the dabase are presented only standalone ions
+    
+
+    # data for the database has been downloaded for chemical identifier, so it is not
+    # a full picture of whole RCSB PDB database, even though some of the record contain
+    # not only standalone ions, this ensures that in the dabase are presented
+    # only standalone ions
+    ready_for_presentation = models.BooleanField(default = False, blank=False)
 
     def get_absolute_url(self):
         return reverse('PDB_summary', kwargs={'id':self.id})
+
 
 
 class MetalSite(models.Model):
@@ -51,6 +59,30 @@ class MetalSite(models.Model):
     number_of_nonprotein_residues = models.IntegerField(null=True, blank=True)
     representative = models.BooleanField(default = False, blank = True, null =True)
     ready_for_presentation = models.BooleanField(default = False, blank=False) #data for the database has been downloaded for chemical identifier, so it is not a full picture of whole RCSB PDB database, even though some of the record contain not only standalone ions, this ensures that in the dabase are presented only standalone ions
+
+    DNA_protein_RNA = "DPR"
+    DNA_protein = "DP"
+    DNA_RNA = "DR"
+    protein_RNA = "PR"
+    protein_protein = "PP"
+    RNA_RNA = "RR"
+    other_complexes = "OC"
+
+    COMPLEX_TYPE_CHOICES = [
+        (DNA_protein_RNA, "DNA-protein-RNA"),
+        (DNA_protein, "DNA-protein"),
+        (DNA_RNA, "DNA-RNA"),
+        (protein_RNA, "protein-RNA"),
+        (protein_protein, "protein-protein"),
+        (RNA_RNA, "RNA-RNA"),
+        (other_complexes, "other complexes")
+        
+    ]
+    complex_type = models.CharField(
+        max_length=3,
+        choices=COMPLEX_TYPE_CHOICES,
+        blank=True,
+    )
 
     def get_absolute_url(self):
         return reverse('metal_site_summary', kwargs={'id':self.id})
@@ -145,4 +177,5 @@ class DBcomposition(models.Model):
     RNA_RNA = models.IntegerField()
     other_complexes = models.IntegerField()
     representative = models.BooleanField(null=True, blank=True)
-    element = models.CharField(max_length=64, null =True)
+    element = models.CharField(max_length=64, null=True)
+

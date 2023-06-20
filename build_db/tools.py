@@ -3,10 +3,68 @@ import json
 import requests
 import atomium
 import re
-metal_list = ["LU","MG","PT4","IR3","HO","HO3","GD3","GD","EU3","EU","BS3","4TI","BA","TB","SM","AU3","FE2","MN3","CU1","ZN","NA","K","CA","RB","SR","CS","SC","V","CR","MN","FE","CO","NI","CU","LI","Y","ZR", "MO","TC","RU","RH","PD","AG","CD","LA","W","RE","OS","IR","PT","AU","HG","AL","GA", "IN","SB","TL","PB", "CE","PR", "U", "YB","TH","NP","PU","AM","CF","NO"]
+#%%
+elements = sorted(["MG","PT4","IR3","BS3","4TI","BA","AU3","FE2","MN3","CU1","ZN",
+                   "NA","K", "CA","RB","SR","CS","SC","V","CR","MN","FE","CO","NI","CU",
+                   "LI","Y","ZR","MO","TC","RU","RH","PD","AG","CD","W","RE","OS","IR",
+                   "PT","AU","HG","AL","GA", "IN","SB","TL","PB", "CE", "U","TH","NP",
+                   "PU","AM","CF","NO"])
+
+lanthanides = sorted(['LA',"SM","YB","PR","LU","TB", "GD","GD3","HO","HO3","EU3","EU"])
+
+metal_list = elements + lanthanides
+
+
+amino_acids= ['ALA', 'CYS', 'ASP', 'GLU', 'PHE', 'GLY', 'HIS', 'ILE', 'LYS',
+               'LEU', 'MET', 'ASN', 'PRO', 'GLN', 'ARG', 'SER', 'THR', 'VAL',
+                 'TRP', 'TYR']
+deoxyribonucleotides = ['DA', 'DC', 'DG', 'DT', 'DI']
+
+ribonucleotides = ['A', 'C', 'G', 'U', 'I']
+
 # ZCM curium (III)
 # 4TI titanium (IV)
 # BS3 bismuth (III)
+
+def check_complex_type(residues):
+    """Returns complex type, based on the provided residues."""
+
+    isProtein = bool()
+    isRNA = bool()
+    isDNA = bool()
+    otherType = bool()
+    
+
+    if any(residue+'.' in residues for residue in  amino_acids):
+        isProtein = True
+        
+    if any(residue+'.' in residues  for residue in  ribonucleotides):
+        isRNA = True
+    if any(residue+'.' in residues for residue in deoxyribonucleotides ):
+        isDNA = True
+    if any(residue.rstrip('.') not in
+            set((*amino_acids, *ribonucleotides, *deoxyribonucleotides))
+              for residue in residues):
+        otherType = True
+
+    
+    complexes_flags = {
+        (True, True, True): 'DPR',
+        (True, False, True): 'DP',
+        (False, True, True): 'DR',
+        (True, True, False): 'PR',          
+        (True, False, False): 'PP',
+        (False, True, False): 'RR',
+        (False, False, False): 'OC',
+    }
+
+
+
+    if otherType:
+        return 'OC'
+    else:
+        return complexes_flags[isProtein, isRNA, isDNA]
+
 
 
 def env_django():

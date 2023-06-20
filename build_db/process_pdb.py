@@ -71,11 +71,14 @@ def process_pdb(code):
         for site, site_all, p_MFS in zip(sites_only_protein, sites_all_residues, sites_only_protein_pseudo_MFS):
             #some sites are not ready for presentation, because they come from molecules like iron-cluster sites
             #this feature will be added in the future
-            if list(site['metals'].keys())[0].het.name not in metal_list:
-                presentation_ready = False
+
+            presentation_ready = False
             if list(site['metals'].keys())[0].het.name  in metal_list:
                 presentation_ready = True
-                #PROBLEM if pdb contains many sites that are considered good will perform this many times... Need to change this in the future
-                add_ready_for_presentation(pdb)
+                if check_ready_for_presentation(pdb) == False:
+                    add_ready_for_presentation(pdb)
+
+            
             site_record = create_site_record(site, MOI, pdb_record, index, site_all, p_MFS,presentation_ready)
             index = index +1
+

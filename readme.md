@@ -25,7 +25,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-4. You can go to http://localhost:8000 in your browser. The database will be empty in order to build database you need to run some scripts.
+4. You can go to http://localhost:8000 in your browser. The database will be empty, in order to build database you need to run some scripts.
 
 5. Go to build_db folder, and execute commands:
 

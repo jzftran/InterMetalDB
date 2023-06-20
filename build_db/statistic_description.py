@@ -1,4 +1,4 @@
-"""Contains instructions  to generate """
+"""Contains instructions  to generate imqages for the publication"""
 
 # %% load functions
 
@@ -32,6 +32,8 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 6})
 from matplotlib.ticker import MaxNLocator
 import pandas as pd
+
+from tools import elements, lanthanides, metal_list
 #####
 
 
@@ -41,13 +43,6 @@ font = {'family' : 'DejaVu Sans',
         'size'   : 6}
 plt.rc('font', **font)
 
-#### metal elements
-
-elements = ["MG","PT4","IR3","BS3","4TI","BA","AU3","FE2","MN3","CU1","ZN","NA","K","CA","RB","SR","CS","SC","V","CR","MN","FE","CO","NI","CU","LI","Y","ZR", "MO","TC","RU","RH","PD","AG","CD","W","RE","OS","IR","PT","AU","HG","AL","GA", "IN","SB","TL","PB", "CE", "U","TH","NP","PU","AM","CF","NO"]
-elements = sorted(elements)
-lanthanides = ['LA',"SM","YB","PR","LU","TB", "GD","GD3","HO","HO3","EU3","EU",]
-lanthanides = sorted(lanthanides)
-all_elements = elements + lanthanides
 
 charge_dict= {'MN3': 'Mn³⁺',
 'LI': 'Li⁺',
@@ -639,7 +634,7 @@ get_number_of_sites('FE2', True)
 get_number_of_sites('FE', True)
 
 coord_num = pd.DataFrame()
-for metal in all_elements:
+for metal in metal_list:
     a= get_number_of_sites(metal,True), get_number_of_sites(metal)
     if a[1][1] != 0:
         d= pd.DataFrame([[a[0][1]],[a[1][1]]], columns = [charge_dict[a[0][0]]], index=['representative', 'non-representative'])

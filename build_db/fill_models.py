@@ -1,8 +1,10 @@
 """Instructions and functions that populate models defined in models.py"""
 
 from limb.models import *
-
 import atomium
+from tools import check_complex_type
+
+
 def add_pdb_record(pdb, assembly_id):
     """Creates a Pdb record in the database. The input for this function are atomium file
     and assembly ID generated with Atomium."""
@@ -19,6 +21,7 @@ def add_pdb_record(pdb, assembly_id):
      title=pdb.title,
      resolution=pdb.resolution,
      assembly=assembly_id,
+
      )
 
 
@@ -81,7 +84,7 @@ def create_site_record(site_dict, metal_element, pdb_record, index, all_site_dic
     all_residue_ids = sorted(list(all_residue_ids))
 
 
-
+    
 
     site_record = MetalSite.objects.create(
          id=f"{pdb_record.id}-{metal_element}-{index}",
@@ -91,6 +94,7 @@ def create_site_record(site_dict, metal_element, pdb_record, index, all_site_dic
          pseudo_MFS = create_site_family(p_MFS["residues"]),
          pdb_id=pdb_record,
          aminoacid_residue_names="".join(residue_names),
+         complex_type = check_complex_type(all_residue_names),
          all_residue_names ="".join(all_residue_names),
          residue_ids ="".join(residue_ids),
          all_residue_ids ="".join(all_residue_ids),
@@ -100,6 +104,8 @@ def create_site_record(site_dict, metal_element, pdb_record, index, all_site_dic
          number_of_coordinating_chains = len(site_dict['chains']),
          number_of_nonprotein_residues = len(all_site_dict["residues"]) - len(site_dict["residues"]),
          ready_for_presentation = presentation_ready,
+         
+
 
         )
 
@@ -176,6 +182,13 @@ def add_has_metal_interface(pdb):
     pdb_record_to_update.has_metal_interface = True
     pdb_record_to_update.save()
 
+def check_ready_for_presentation(pdb):
+    """Checks wheter the PDB file is ready for
+    the presentation."""
+    pdb_record = Pdb.objects.get(id=pdb.code)
+    return pdb_record.ready_for_presentation
+
+
 def add_ready_for_presentation(pdb):
     """Changes the value of ready_for_presentation field to True if PDB is ready for presentation, i.e. contains
     metal site that is ready for presentation.
@@ -207,19 +220,20 @@ def add_metalPDB_Data(metals_in_pdb, no_metal, scraping_date, update_date):
     )
 
 
-def add_DBcomposition(DNA_protein_RNA, DNA_protein, DNA_RNA, protein_RNA,protein_protein,DNA_DNA,RNA_RNA,other_complexes,representative,element):
+def add_DBcomposition(element, representative):
     """Gets meta data about this database and RCSB database. Used in
     statistics view generation."""
 
     return DBcomposition.objects.create(
-    DNA_protein_RNA = DNA_protein_RNA,
-    DNA_protein = DNA_protein,
-    DNA_RNA = DNA_RNA,
-    protein_RNA = protein_RNA,
-    protein_protein = protein_protein,
-    DNA_DNA = DNA_DNA,
-    RNA_RNA = RNA_RNA,
-    other_complexes = other_complexes,
+    element = element,
     representative = representative,
-    element = element
+    DNA_protein_RNA = MetalSite.objects.filter(complex_type='DPR', representative=representative).count(),
+    DNA_protein = MetalSite.objects.filter(complex_type='DP', representative=representative).count(),
+    DNA_RNA = MetalSite.objects.filter(complex_type='DR', representative=representative).count(),
+    protein_RNA = MetalSite.objects.filter(complex_type='PR', representative=representative).count(),
+    protein_protein = MetalSite.objects.filter(complex_type='PP', representative=representative).count(),
+    DNA_DNA = MetalSite.objects.filter(complex_type='DD', representative=representative).count(),
+    RNA_RNA = MetalSite.objects.filter(complex_type='RR', representative=representative).count(),
+    other_complexes = MetalSite.objects.filter(complex_type='OC', representative=representative).count()
     )
+
